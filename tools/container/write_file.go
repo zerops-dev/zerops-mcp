@@ -5,7 +5,12 @@ import (
 	"strings"
 
 	"github.com/mark3labs/mcp-go/mcp"
+	mcpServer "github.com/mark3labs/mcp-go/server"
 )
+
+func NewWriteFile() *WriteFile {
+	return &WriteFile{}
+}
 
 type WriteFile struct {
 }
@@ -16,7 +21,7 @@ type WriteFileParams struct {
 	Content   string `json:"content"`
 }
 
-func (h *WriteFile) Tools() mcp.Tool {
+func (h *WriteFile) McpTool() (mcp.Tool, mcpServer.ToolHandlerFunc) {
 	return mcp.NewTool(
 		"container_file_write",
 		mcp.WithDescription("Write a single file or directory"),
@@ -32,7 +37,7 @@ func (h *WriteFile) Tools() mcp.Tool {
 			mcp.Description("target filename content"),
 			mcp.Required(),
 		),
-	)
+	), mcp.NewTypedToolHandler(h.Handle)
 }
 
 func (h *WriteFile) Handle(_ context.Context, _ mcp.CallToolRequest, params WriteFileParams) (*mcp.CallToolResult, error) {

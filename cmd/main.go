@@ -2,65 +2,36 @@ package main
 
 import (
 	"context"
-	"fmt"
-	"log"
+	"path"
+	"strings"
 
-	"github.com/jansaidl/zerops-mcp/tools/container"
-	"github.com/mark3labs/mcp-go/mcp"
-	"github.com/mark3labs/mcp-go/server"
+	"github.com/zerops-dev/zerops-mcp/services/cmd"
+	runApp "github.com/zerops-dev/di/app"
+)
+
+var (
+	Name            = "zerops-mcp"
+	Service         = "zerops-mcp"
+	Exec            = "/usr/local/bin/zerops-mcp"
+	BuildTime       = "time"
+	Commit          = "commit"
+	Version         = "v0.0.0"
+	Description     = "Zerops mcp"
+	DescriptionLong = "Zerops mcp"
 )
 
 func main() {
 
-	hooks := &server.Hooks{}
-	hooks.AddBeforeAny(func(ctx context.Context, id any, method mcp.MCPMethod, message any) {
-		fmt.Printf("beforeAny: %s, %v, %v\n", method, id, message)
-	})
-	hooks.AddOnSuccess(func(ctx context.Context, id any, method mcp.MCPMethod, message any, result any) {
-		fmt.Printf("onSuccess: %s, %v, %v, %v\n", method, id, message, result)
-	})
-	hooks.AddOnError(func(ctx context.Context, id any, method mcp.MCPMethod, message any, err error) {
-		fmt.Printf("onError: %s, %v, %v, %v\n", method, id, message, err)
-	})
-	hooks.AddBeforeInitialize(func(ctx context.Context, id any, message *mcp.InitializeRequest) {
-		fmt.Printf("beforeInitialize: %v, %v\n", id, message)
-	})
-	hooks.AddOnRequestInitialization(func(ctx context.Context, id any, message any) error {
-		fmt.Printf("AddOnRequestInitialization: %v, %v\n", id, message)
-		// authorization verification and other preprocessing tasks are performed.
-		return nil
-	})
-	hooks.AddAfterInitialize(func(ctx context.Context, id any, message *mcp.InitializeRequest, result *mcp.InitializeResult) {
-		fmt.Printf("afterInitialize: %v, %v, %v\n", id, message, result)
-	})
-	hooks.AddAfterCallTool(func(ctx context.Context, id any, message *mcp.CallToolRequest, result *mcp.CallToolResult) {
-		fmt.Printf("afterCallTool: %v, %v, %v\n", id, message, result)
-	})
-	hooks.AddBeforeCallTool(func(ctx context.Context, id any, message *mcp.CallToolRequest) {
-		fmt.Printf("beforeCallTool: %v, %v\n", id, message)
-	})
-	mcpServer := server.NewMCPServer(
-		"zerops",
-		"1.0.0.",
-		server.WithHooks(hooks),
-	)
+	applicationSetup := runApp.New(context.Background(), Name)
+	applicationSetup.Exec = strings.Join([]string{Exec, "run", "--config", path.Join("/etc", Service, "config.yml")}, " ")
+	applicationSetup.Version = Version
+	applicationSetup.Commit = Commit
+	applicationSetup.Service = Service
+	applicationSetup.Description = Description
+	applicationSetup.DescriptionLong = DescriptionLong
+	applicationSetup.SetBuildTime(BuildTime)
 
-	{
-		c := &container.ReadFile{}
-		mcpServer.AddTool(c.Tools(), mcp.NewTypedToolHandler(c.Handle))
-	}
-
-	{
-		c := &container.WriteFile{}
-		mcpServer.AddTool(c.Tools(), mcp.NewTypedToolHandler(c.Handle))
-	}
-	{
-		c := &container.ReadDir{}
-		mcpServer.AddTool(c.Tools(), mcp.NewTypedToolHandler(c.Handle))
-	}
-
-	if err := server.ServeStdio(mcpServer); err != nil {
-		log.Fatal(err)
-	}
-
+	applicationSetup.RegisterCommands()
+	cmd.AddCommands(applicationSetup, applicationSetup.RootCommand())
+	applicationSetup.Run()
 }

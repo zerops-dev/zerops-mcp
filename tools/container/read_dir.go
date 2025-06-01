@@ -5,17 +5,21 @@ import (
 	"strings"
 
 	"github.com/mark3labs/mcp-go/mcp"
+	mcpServer "github.com/mark3labs/mcp-go/server"
 )
 
-type ReadDir struct {
+func NewReadDir() *ReadDir {
+	return &ReadDir{}
 }
+
+type ReadDir struct{}
 
 type ReadDirParams struct {
 	Container string `json:"container"`
 	Directory string `json:"directory"`
 }
 
-func (h *ReadDir) Tools() mcp.Tool {
+func (h *ReadDir) McpTool() (mcp.Tool, mcpServer.ToolHandlerFunc) {
 	return mcp.NewTool(
 		"container_list_directory",
 		mcp.WithDescription("List directory"),
@@ -27,7 +31,7 @@ func (h *ReadDir) Tools() mcp.Tool {
 			mcp.Description("source directory"),
 			mcp.Required(),
 		),
-	)
+	), mcp.NewTypedToolHandler(h.Handle)
 }
 
 func (h *ReadDir) Handle(_ context.Context, _ mcp.CallToolRequest, params ReadFileParams) (*mcp.CallToolResult, error) {
