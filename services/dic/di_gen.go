@@ -8,6 +8,7 @@ package dic
 // gen
 import (
 	"log/slog"
+	"net/http"
 	"strings"
 
 	"github.com/google/wire"
@@ -16,24 +17,35 @@ import (
 	"github.com/zerops-dev/di/appRunner"
 	configurator "github.com/zerops-dev/di/di"
 	"github.com/zerops-dev/di/logger"
+	"github.com/zerops-dev/zerops-mcp/services/httpClient"
 	"github.com/zerops-dev/zerops-mcp/services/server"
+	"github.com/zerops-dev/zerops-mcp/services/zeropsSdk"
 	"github.com/zerops-dev/zerops-mcp/tools/container"
+	"github.com/zerops-dev/zerops-mcp/tools/container/create"
+	"github.com/zeropsio/zerops-go/sdk"
+	"github.com/zeropsio/zerops-go/sdkBase"
 )
 
 type Config struct {
-	NameLoggerConfig1 logger.Config
-	NameServerConfig8 server.Config
+	NameLoggerConfig1      logger.Config
+	NameHttpClientConfig10 httpClient.Config
+	NameSdkBaseConfig13    sdkBase.Config
+	NameServerConfig14     server.Config
 }
 
 func NewConfig(prefix string,
 	configurator *configurator.Handler,
 ) *Config {
 	c := &Config{
-		NameLoggerConfig1: (logger.Config)(logger.NewConfig()),
-		NameServerConfig8: (server.Config)(server.NewConfig()),
+		NameLoggerConfig1:      (logger.Config)(logger.NewConfig()),
+		NameHttpClientConfig10: (httpClient.Config)(httpClient.NewConfig()),
+		NameSdkBaseConfig13:    (sdkBase.Config)(zeropsSdk.NewConfig()),
+		NameServerConfig14:     (server.Config)(server.NewConfig()),
 	}
 	configurator.Register(concat(prefix, "log"), &c.NameLoggerConfig1)
-	configurator.Register(concat(prefix, "server"), &c.NameServerConfig8)
+	configurator.Register(concat(prefix, "httpClient"), &c.NameHttpClientConfig10)
+	configurator.Register(concat(prefix, "sdk"), &c.NameSdkBaseConfig13)
+	configurator.Register(concat(prefix, "server"), &c.NameServerConfig14)
 
 	return c
 }
@@ -44,10 +56,22 @@ func GetNameLoggerConfig1(c Config) NameLoggerConfig1 {
 	return NameLoggerConfig1(c.NameLoggerConfig1)
 }
 
-type NameServerConfig8 server.Config
+type NameHttpClientConfig10 httpClient.Config
 
-func GetNameServerConfig8(c Config) NameServerConfig8 {
-	return NameServerConfig8(c.NameServerConfig8)
+func GetNameHttpClientConfig10(c Config) NameHttpClientConfig10 {
+	return NameHttpClientConfig10(c.NameHttpClientConfig10)
+}
+
+type NameSdkBaseConfig13 sdkBase.Config
+
+func GetNameSdkBaseConfig13(c Config) NameSdkBaseConfig13 {
+	return NameSdkBaseConfig13(c.NameSdkBaseConfig13)
+}
+
+type NameServerConfig14 server.Config
+
+func GetNameServerConfig14(c Config) NameServerConfig14 {
+	return NameServerConfig14(c.NameServerConfig14)
 }
 
 type AppConfig struct {
@@ -125,7 +149,7 @@ func GetNameAppRunnerRegister3(arg0 *NameAppRunnerHandler2,
 
 type NameServerHandler4 server.Handler
 
-func GetNameServerHandler4(arg0 NameServerConfig8,
+func GetNameServerHandler4(arg0 NameServerConfig14,
 	arg1 NameAppRunnerRegister3,
 ) (*NameServerHandler4, error) {
 
@@ -133,6 +157,48 @@ func GetNameServerHandler4(arg0 NameServerConfig8,
 		(appRunner.Register)(arg1),
 	)
 	return (*NameServerHandler4)(v), err
+
+}
+
+type NameCreateHandler8 create.Handler
+
+func GetNameCreateHandler8(arg0 *NameZeropsSdkHandler12,
+) *NameCreateHandler8 {
+
+	return (*NameCreateHandler8)(create.New((*zeropsSdk.Handler)(arg0)))
+
+}
+
+type NameHttpClient9 http.Client
+
+func GetNameHttpClient9(arg0 NameHttpClientConfig10,
+) *NameHttpClient9 {
+
+	return (*NameHttpClient9)(httpClient.New((httpClient.Config)(arg0)))
+
+}
+
+type NameSdkHandler11 sdk.Handler
+
+func GetNameSdkHandler11(arg0 NameSdkBaseConfig13,
+	arg1 *NameHttpClient9,
+) NameSdkHandler11 {
+
+	return (NameSdkHandler11)(sdk.New((sdkBase.Config)(arg0),
+		(*http.Client)(arg1),
+	))
+
+}
+
+type NameZeropsSdkHandler12 zeropsSdk.Handler
+
+func GetNameZeropsSdkHandler12(arg0 NameSdkBaseConfig13,
+	arg1 *NameHttpClient9,
+) *NameZeropsSdkHandler12 {
+
+	return (*NameZeropsSdkHandler12)(zeropsSdk.New((sdkBase.Config)(arg0),
+		(*http.Client)(arg1),
+	))
 
 }
 
@@ -163,9 +229,9 @@ func GetNameContainerWriteFile7() *NameContainerWriteFile7 {
 type setter_0 struct{}
 type setter_0_Value server.Tools
 
-func getSetter_0_Value(target *NameContainerReadDir5) (setter_0_Value, error) {
+func getSetter_0_Value(target *NameCreateHandler8) (setter_0_Value, error) {
 
-	return (setter_0_Value)((*container.ReadDir)(target)), nil
+	return (setter_0_Value)((*create.Handler)(target)), nil
 
 }
 
@@ -179,9 +245,9 @@ func setSetter_0(source *NameServerHandler4, target setter_0_Value) *setter_0 {
 type setter_1 struct{}
 type setter_1_Value server.Tools
 
-func getSetter_1_Value(target *NameContainerReadFile6) (setter_1_Value, error) {
+func getSetter_1_Value(target *NameContainerReadDir5) (setter_1_Value, error) {
 
-	return (setter_1_Value)((*container.ReadFile)(target)), nil
+	return (setter_1_Value)((*container.ReadDir)(target)), nil
 
 }
 
@@ -195,9 +261,9 @@ func setSetter_1(source *NameServerHandler4, target setter_1_Value) *setter_1 {
 type setter_2 struct{}
 type setter_2_Value server.Tools
 
-func getSetter_2_Value(target *NameContainerWriteFile7) (setter_2_Value, error) {
+func getSetter_2_Value(target *NameContainerReadFile6) (setter_2_Value, error) {
 
-	return (setter_2_Value)((*container.WriteFile)(target)), nil
+	return (setter_2_Value)((*container.ReadFile)(target)), nil
 
 }
 
@@ -208,31 +274,59 @@ func setSetter_2(source *NameServerHandler4, target setter_2_Value) *setter_2 {
 
 }
 
+type setter_3 struct{}
+type setter_3_Value server.Tools
+
+func getSetter_3_Value(target *NameContainerWriteFile7) (setter_3_Value, error) {
+
+	return (setter_3_Value)((*container.WriteFile)(target)), nil
+
+}
+
+func setSetter_3(source *NameServerHandler4, target setter_3_Value) *setter_3 {
+
+	server.RegisterTools((*server.Handler)(source), target)
+	return &setter_3{}
+
+}
+
 var DepSet = wire.NewSet(
 	app.Set,
 	NewApplication, getSetter_0_Value, setSetter_0,
 	getSetter_1_Value, setSetter_1,
 	getSetter_2_Value, setSetter_2,
+	getSetter_3_Value, setSetter_3,
 	GetNameSlogLogger0,
 	GetNameAppRunnerHandler2,
 	GetNameAppRunnerRegister3,
 	GetNameServerHandler4,
+	GetNameCreateHandler8,
+	GetNameHttpClient9,
+	GetNameSdkHandler11,
+	GetNameZeropsSdkHandler12,
 	GetNameContainerReadDir5,
 	GetNameContainerReadFile6,
 	GetNameContainerWriteFile7,
 
 	GetNameLoggerConfig1,
-	GetNameServerConfig8,
+	GetNameHttpClientConfig10,
+	GetNameSdkBaseConfig13,
+	GetNameServerConfig14,
 )
 
 func NewApplication(
 	systemApp *app.ApplicationSetup, _ *setter_0,
 	_ *setter_1,
 	_ *setter_2,
+	_ *setter_3,
 	logger00 *NameSlogLogger0,
 	runner21 *NameAppRunnerHandler2,
 	_ NameAppRunnerRegister3,
 	_ *NameServerHandler4,
+	_ *NameCreateHandler8,
+	_ *NameHttpClient9,
+	_ NameSdkHandler11,
+	_ *NameZeropsSdkHandler12,
 	_ *NameContainerReadDir5,
 	_ *NameContainerReadFile6,
 	_ *NameContainerWriteFile7,
