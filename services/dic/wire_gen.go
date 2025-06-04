@@ -18,44 +18,68 @@ import (
 
 //go:generate wire
 func CreateApp(applicationSetup *app.ApplicationSetup, config Config) (*App, error) {
-	nameServerConfig14 := GetNameServerConfig14(config)
+	nameServerConfig18 := GetNameServerConfig18(config)
 	nameLoggerConfig1 := GetNameLoggerConfig1(config)
 	nameSlogLogger0 := GetNameSlogLogger0(nameLoggerConfig1)
 	nameAppRunnerHandler2 := GetNameAppRunnerHandler2(nameSlogLogger0)
 	nameAppRunnerRegister3 := GetNameAppRunnerRegister3(nameAppRunnerHandler2)
-	nameServerHandler4, err := GetNameServerHandler4(nameServerConfig14, nameAppRunnerRegister3)
+	nameServerHandler4, err := GetNameServerHandler4(nameServerConfig18, nameAppRunnerRegister3)
 	if err != nil {
 		return nil, err
 	}
-	nameSdkBaseConfig13 := GetNameSdkBaseConfig13(config)
-	nameHttpClientConfig10 := GetNameHttpClientConfig10(config)
-	nameHttpClient9 := GetNameHttpClient9(nameHttpClientConfig10)
-	nameZeropsSdkHandler12 := GetNameZeropsSdkHandler12(nameSdkBaseConfig13, nameHttpClient9)
-	nameCreateHandler8 := GetNameCreateHandler8(nameZeropsSdkHandler12)
-	dicSetter_0_Value, err := getSetter_0_Value(nameCreateHandler8)
+	nameSdkBaseConfig17 := GetNameSdkBaseConfig17(config)
+	nameHttpClientConfig14 := GetNameHttpClientConfig14(config)
+	nameHttpClient13 := GetNameHttpClient13(nameHttpClientConfig14)
+	nameZeropsSdkHandler16 := GetNameZeropsSdkHandler16(nameSdkBaseConfig17, nameHttpClient13)
+	nameServiceCreateHandler8 := GetNameServiceCreateHandler8(nameZeropsSdkHandler16)
+	dicSetter_0_Value, err := getSetter_0_Value(nameServiceCreateHandler8)
 	if err != nil {
 		return nil, err
 	}
 	dicSetter_0 := setSetter_0(nameServerHandler4, dicSetter_0_Value)
-	nameContainerReadDir5 := GetNameContainerReadDir5()
-	dicSetter_1_Value, err := getSetter_1_Value(nameContainerReadDir5)
+	nameServiceStopHandler9 := GetNameServiceStopHandler9(nameZeropsSdkHandler16)
+	dicSetter_1_Value, err := getSetter_1_Value(nameServiceStopHandler9)
 	if err != nil {
 		return nil, err
 	}
 	dicSetter_1 := setSetter_1(nameServerHandler4, dicSetter_1_Value)
-	nameContainerReadFile6 := GetNameContainerReadFile6()
-	dicSetter_2_Value, err := getSetter_2_Value(nameContainerReadFile6)
+	nameServiceStartHandler10 := GetNameServiceStartHandler10(nameZeropsSdkHandler16)
+	dicSetter_2_Value, err := getSetter_2_Value(nameServiceStartHandler10)
 	if err != nil {
 		return nil, err
 	}
 	dicSetter_2 := setSetter_2(nameServerHandler4, dicSetter_2_Value)
-	nameContainerWriteFile7 := GetNameContainerWriteFile7()
-	dicSetter_3_Value, err := getSetter_3_Value(nameContainerWriteFile7)
+	nameServiceRestartHandler11 := GetNameServiceRestartHandler11(nameZeropsSdkHandler16)
+	dicSetter_3_Value, err := getSetter_3_Value(nameServiceRestartHandler11)
 	if err != nil {
 		return nil, err
 	}
 	dicSetter_3 := setSetter_3(nameServerHandler4, dicSetter_3_Value)
-	nameSdkHandler11 := GetNameSdkHandler11(nameSdkBaseConfig13, nameHttpClient9)
-	dicApp := NewApplication(applicationSetup, dicSetter_0, dicSetter_1, dicSetter_2, dicSetter_3, nameSlogLogger0, nameAppRunnerHandler2, nameAppRunnerRegister3, nameServerHandler4, nameCreateHandler8, nameHttpClient9, nameSdkHandler11, nameZeropsSdkHandler12, nameContainerReadDir5, nameContainerReadFile6, nameContainerWriteFile7)
+	nameServiceDeleteHandler12 := GetNameServiceDeleteHandler12(nameZeropsSdkHandler16)
+	dicSetter_4_Value, err := getSetter_4_Value(nameServiceDeleteHandler12)
+	if err != nil {
+		return nil, err
+	}
+	dicSetter_4 := setSetter_4(nameServerHandler4, dicSetter_4_Value)
+	nameContainerReadDirectoryHandler5 := GetNameContainerReadDirectoryHandler5()
+	dicSetter_5_Value, err := getSetter_5_Value(nameContainerReadDirectoryHandler5)
+	if err != nil {
+		return nil, err
+	}
+	dicSetter_5 := setSetter_5(nameServerHandler4, dicSetter_5_Value)
+	nameContainerWriteFileHandler6 := GetNameContainerWriteFileHandler6()
+	dicSetter_6_Value, err := getSetter_6_Value(nameContainerWriteFileHandler6)
+	if err != nil {
+		return nil, err
+	}
+	dicSetter_6 := setSetter_6(nameServerHandler4, dicSetter_6_Value)
+	nameContainerReadFileHandler7 := GetNameContainerReadFileHandler7()
+	dicSetter_7_Value, err := getSetter_7_Value(nameContainerReadFileHandler7)
+	if err != nil {
+		return nil, err
+	}
+	dicSetter_7 := setSetter_7(nameServerHandler4, dicSetter_7_Value)
+	nameSdkHandler15 := GetNameSdkHandler15(nameSdkBaseConfig17, nameHttpClient13)
+	dicApp := NewApplication(applicationSetup, dicSetter_0, dicSetter_1, dicSetter_2, dicSetter_3, dicSetter_4, dicSetter_5, dicSetter_6, dicSetter_7, nameServiceStartHandler10, nameServiceCreateHandler8, nameAppRunnerRegister3, nameServerHandler4, nameZeropsSdkHandler16, nameSdkHandler15, nameAppRunnerHandler2, nameServiceRestartHandler11, nameHttpClient13, nameSlogLogger0, nameServiceStopHandler9, nameServiceDeleteHandler12, nameContainerReadDirectoryHandler5, nameContainerWriteFileHandler6, nameContainerReadFileHandler7)
 	return dicApp, nil
 }

@@ -1,4 +1,4 @@
-package container
+package sshUtil
 
 import (
 	"io"
@@ -8,7 +8,7 @@ import (
 	"golang.org/x/crypto/ssh"
 )
 
-func sshWriteFile(remoteHost string, srcFile io.Reader, dstPath string) error {
+func WriteFile(remoteHost string, srcFile io.Reader, dstPath string) error {
 	config := &ssh.ClientConfig{
 		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
 	}
@@ -37,7 +37,7 @@ func sshWriteFile(remoteHost string, srcFile io.Reader, dstPath string) error {
 	return nil
 }
 
-func sshReadFile(remoteHost string, srcFile string, dts io.Writer) error {
+func ReadFile(remoteHost string, srcFile string, dts io.Writer) error {
 	config := &ssh.ClientConfig{
 		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
 	}
@@ -66,7 +66,7 @@ func sshReadFile(remoteHost string, srcFile string, dts io.Writer) error {
 	return nil
 }
 
-func sshReaddDirectory(remoteHost string, directory string) ([]string, error) {
+func ReaddDirectory(remoteHost string, directory string) ([]string, error) {
 	config := &ssh.ClientConfig{
 		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
 	}

@@ -1,4 +1,4 @@
-package container
+package containerWriteFile
 
 import (
 	"context"
@@ -6,22 +6,23 @@ import (
 
 	"github.com/mark3labs/mcp-go/mcp"
 	mcpServer "github.com/mark3labs/mcp-go/server"
+	"github.com/zerops-dev/zerops-mcp/services/sshUtil"
 )
 
-func NewWriteFile() *WriteFile {
-	return &WriteFile{}
+func New() *Handler {
+	return &Handler{}
 }
 
-type WriteFile struct {
+type Handler struct {
 }
 
-type WriteFileParams struct {
+type Params struct {
 	Container string `json:"container"`
 	Filename  string `json:"filename"`
 	Content   string `json:"content"`
 }
 
-func (h *WriteFile) McpTool() (mcp.Tool, mcpServer.ToolHandlerFunc) {
+func (h *Handler) McpTool() (mcp.Tool, mcpServer.ToolHandlerFunc) {
 	return mcp.NewTool(
 		"container_file_write",
 		mcp.WithDescription("Write a single file or directory"),
@@ -40,8 +41,8 @@ func (h *WriteFile) McpTool() (mcp.Tool, mcpServer.ToolHandlerFunc) {
 	), mcp.NewTypedToolHandler(h.Handle)
 }
 
-func (h *WriteFile) Handle(_ context.Context, _ mcp.CallToolRequest, params WriteFileParams) (*mcp.CallToolResult, error) {
-	if err := sshWriteFile(params.Container, strings.NewReader(params.Content), params.Filename); err != nil {
+func (h *Handler) Handle(_ context.Context, _ mcp.CallToolRequest, params Params) (*mcp.CallToolResult, error) {
+	if err := sshUtil.WriteFile(params.Container, strings.NewReader(params.Content), params.Filename); err != nil {
 		return nil, err
 	}
 	return mcp.NewToolResultText("success"), nil

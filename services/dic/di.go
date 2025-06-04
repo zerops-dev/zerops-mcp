@@ -7,8 +7,14 @@ import (
 	"github.com/zerops-dev/zerops-mcp/services/httpClient"
 	"github.com/zerops-dev/zerops-mcp/services/server"
 	"github.com/zerops-dev/zerops-mcp/services/zeropsSdk"
-	"github.com/zerops-dev/zerops-mcp/tools/container"
-	"github.com/zerops-dev/zerops-mcp/tools/container/create"
+	"github.com/zerops-dev/zerops-mcp/tools/containerReadDirectory"
+	"github.com/zerops-dev/zerops-mcp/tools/containerReadFile"
+	"github.com/zerops-dev/zerops-mcp/tools/containerWriteFile"
+	"github.com/zerops-dev/zerops-mcp/tools/serviceCreate"
+	"github.com/zerops-dev/zerops-mcp/tools/serviceDelete"
+	"github.com/zerops-dev/zerops-mcp/tools/serviceRestart"
+	"github.com/zerops-dev/zerops-mcp/tools/serviceStart"
+	"github.com/zerops-dev/zerops-mcp/tools/serviceStop"
 	"github.com/zeropsio/zerops-go/sdk"
 	_ "golang.org/x/tools/imports"
 )
@@ -29,10 +35,15 @@ var _ = func() *s.Di {
 			appRunner.DiScope(),
 			s.Service(server.New, s.WithSetter(server.RegisterTools)),
 
-			s.Service(container.NewReadDir),
-			s.Service(container.NewReadFile),
-			s.Service(container.NewWriteFile),
-			s.Service(create.New),
+			s.Service(containerReadDirectory.New),
+			s.Service(containerWriteFile.New),
+			s.Service(containerReadFile.New),
+
+			s.Service(serviceCreate.New),
+			s.Service(serviceStop.New),
+			s.Service(serviceStart.New),
+			s.Service(serviceRestart.New),
+			s.Service(serviceDelete.New),
 
 			httpClient.DiScope(),
 
